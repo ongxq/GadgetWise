@@ -55,6 +55,9 @@ const signup = async () => {
     class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-purple-400 to-pink-500 px-4"
   >
     <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+      <div class="flex justify-center mb-1">
+        <img src="../assets/logo.png" class="h-36 w-36 object-contain" />
+      </div>
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Sign Up</h2>
 
       <!-- Username Input -->

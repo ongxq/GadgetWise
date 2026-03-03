@@ -18,8 +18,6 @@ const toggleSidebar = () => {
     <div
       class="flex-1 transition-all duration-300 p-8"
       :class="isOpen ? 'ml-64' : 'ml-20'"
-    >
-      <h1 class="text-2xl font-bold">Dashboard</h1>
-    </div>
+    ></div>
   </div>
 </template>

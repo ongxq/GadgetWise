@@ -35,9 +35,9 @@ const login = async () => {
   }
 
   if (profile.role === "admin") {
-    router.push("/admin-dashboard");
+    router.push("/admin-dashboard/ordering");
   } else {
-    router.push("/dashboard");
+    router.push("/dashboard/ai-recommendation");
   }
 };
 </script>
@@ -47,6 +47,10 @@ const login = async () => {
     class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-teal-400 to-blue-500 px-4"
   >
     <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+      <!-- Logo -->
+      <div class="flex justify-center mb-1">
+        <img src="../assets/logo.png" class="h-36 w-36 object-contain" />
+      </div>
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Login</h2>
 
       <input

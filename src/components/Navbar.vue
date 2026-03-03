@@ -61,7 +61,12 @@ onMounted(async () => {
         class="flex items-center space-x-3 cursor-pointer"
         @click="toggleSidebar"
       >
-        <img src="../assets/image_1.jpg" class="h-8 w-8" />
+        <div
+          class="h-12 w-12 rounded-full border-2 border-indigo-600 bg-white flex items-center justify-center overflow-hidden"
+        >
+          <img src="../assets/logo.png" class="h-8 w-8 object-contain" />
+        </div>
+
         <span class="text-xl font-bold text-indigo-600">GadgetWise</span>
       </div>
 
