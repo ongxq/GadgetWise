@@ -5,7 +5,9 @@ const query = ref("");
 const results = ref([]);
 
 async function searchRecommendation() {
-  const response = await fetch("http://127.0.0.1:8000/recommend", {
+  // clear previous results
+  results.value = [];
+  const response = await fetch("http://127.0.0.1:8000/test_nlp", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,7 +19,8 @@ async function searchRecommendation() {
 
   const data = await response.json();
 
-  results.value = data;
+  // results.value = data;
+  results.value = data.filtered_results;
 }
 </script>
 
@@ -28,6 +31,7 @@ async function searchRecommendation() {
     <div class="mb-6">
       <input
         v-model="query"
+        @keyup.enter="searchRecommendation"
         placeholder="Example: gaming laptop under 3000"
         class="border p-2 w-96 mr-3"
       />
@@ -48,13 +52,13 @@ async function searchRecommendation() {
         :key="item.id"
         class="border p-4 mb-3 rounded"
       >
-        <p class="font-bold">{{ item.name }}</p>
+        <p class="font-bold">{{ item.Model }}</p>
 
-        <p>Brand: {{ item.brand }}</p>
+        <p>Brand: {{ item.Brand }}</p>
 
-        <p>Price: RM {{ item.price_rm }}</p>
+        <p>Price: RM {{ item["Price (RM)"] }}</p>
 
-        <p>Processor: {{ item.processor }}</p>
+        <p>Processor: {{ item.Ram }}</p>
       </div>
     </div>
   </div>
