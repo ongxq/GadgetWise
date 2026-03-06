@@ -3,24 +3,34 @@ import { ref } from "vue";
 
 const query = ref("");
 const results = ref([]);
+const errorMessage = ref("");
 
 async function searchRecommendation() {
   // clear previous results
   results.value = [];
-  const response = await fetch("http://127.0.0.1:8000/test_nlp", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: query.value,
-    }),
-  });
+  errorMessage.value = "";
+  try {
+    const response = await fetch("http://127.0.0.1:8000/recommend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: query.value, top_k: 10 }),
+    });
 
-  const data = await response.json();
+    if (!response.ok) throw new Error("Failed to fetch recommendations");
 
-  // results.value = data;
-  results.value = data.filtered_results;
+    const data = await response.json();
+
+    if (data.error) {
+      errorMessage.value = data.error;
+      results.value = [];
+    } else {
+      results.value = data.recommendations || []; // fallback if undefined
+    }
+  } catch (err) {
+    console.error(err);
+    errorMessage.value = err.message;
+    results.value = [];
+  }
 }
 </script>
 
@@ -44,22 +54,29 @@ async function searchRecommendation() {
       </button>
     </div>
 
-    <div v-if="results.length">
+    <div v-if="errorMessage" class="text-red-500 mb-4">
+      {{ errorMessage }}
+    </div>
+
+    <div v-if="results && results.length">
       <h2 class="text-xl font-semibold mb-4">Top Recommendations</h2>
 
       <div
-        v-for="item in results"
-        :key="item.id"
+        v-for="(item, index) in results"
+        :key="index"
         class="border p-4 mb-3 rounded"
       >
-        <p class="font-bold">{{ item.Model }}</p>
-
-        <p>Brand: {{ item.Brand }}</p>
-
-        <p>Price: RM {{ item["Price (RM)"] }}</p>
-
-        <p>Processor: {{ item.Ram }}</p>
+        <p class="font-bold">{{ item.model }}</p>
+        <p>Brand: {{ item.brand }}</p>
+        <p>Price: RM {{ item.price }}</p>
+        <p>RAM: {{ item.ram }}</p>
+        <p>SSD: {{ item.ssd }}</p>
+        <p>GPU: {{ item.gpu }}</p>
       </div>
+    </div>
+
+    <div v-else-if="!errorMessage">
+      <p>No results found.</p>
     </div>
   </div>
 </template>

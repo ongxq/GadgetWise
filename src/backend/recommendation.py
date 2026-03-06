@@ -1,86 +1,160 @@
 # # recommendation.py
-# from nlp_module import parse_query
-# from supabase_client import get_dataset
+# import re
 
-# def normalize_laptop(l):
-#     """
-#     Map Supabase laptop fields to standard keys expected by scoring:
-#     name, brand, price_rm, processor
-#     """
-#     return {
-#         # If your table has a product/model name column, replace "Brand" here
-#         "name": l.get("Brand") + " " + l.get("Generation", ""),  
-#         "brand": l.get("Brand") or "Unknown",
-#         "price_rm": l.get("Price (RM)") or l.get("Price") or 0,
-#         "processor": l.get("Generation") or "Unknown",
-#         **l
-#     }
 
-# def score_laptop(laptop, prefs):
-#     """
-#     Assign a score based on CPU performance and budget preferences
-#     """
-#     score = 0
-#     cpu = laptop.get("processor", "").lower()
-#     price = laptop.get("price_rm", 0)
+# # ------------------------
+# # Weighted scoring for top laptops
+# # ------------------------
+# def recommend_top_laptops(filtered_data, feature_vector, top_k=3):
+#     scored_laptops = []
 
-#     # Performance scoring
-#     if prefs.get("performance") == "high":
-#         if any(x in cpu for x in ["i7", "i9", "ryzen 7", "ryzen 9"]):
-#             score += 3
-#         elif any(x in cpu for x in ["i5", "ryzen 5"]):
-#             score += 2
+#     for laptop in filtered_data:
+#         score = 0
+#         weights = {
+#             "ram": 2,
+#             "ssd": 1,
+#             "vram": 2,
+#             "gaming": 3,
+#             "rating": 2,
+#             "price": 1
+#         }
 
-#     # Budget scoring
-#     budget = prefs.get("budget")
-#     if budget == "low" and price < 2000:
-#         score += 2
-#     elif budget == "medium" and 2000 <= price <= 5000:
-#         score += 2
+#         # RAM
+#         try:
+#             laptop_ram = int(re.search(r'\d+', laptop.get("Ram","0")).group())
+#         except:
+#             laptop_ram = 0
+#         score += laptop_ram * weights["ram"]
 
-#     return score
+#         # SSD
+#         try:
+#             laptop_ssd = int(re.search(r'\d+', laptop.get("SSD","0")).group())
+#         except:
+#             laptop_ssd = 0
+#         score += laptop_ssd * weights["ssd"]
 
-# def recommend(query):
-#     """
-#     Returns top 5 laptops from Supabase based on the parsed query
-#     """
-#     try:
-#         # Parse query to extract preferences
-#         prefs = parse_query(query)
-#         prefs.setdefault("performance", "medium")
-#         prefs.setdefault("budget", "medium")
-#         prefs.setdefault("price_limit", None)
+#         # VRAM / Dedicated GPU scoring
+#         laptop_vram = int(laptop.get("VRAM", 0))
+#         if feature_vector["dedicated_gpu"] and laptop.get("Dedicated Gpu") != "Yes":
+#             laptop_vram = 0  # no score if user wants dedicated GPU but laptop doesn't have
+#         score += laptop_vram * weights["vram"]
 
-#         # Get dataset from Supabase
-#         laptops = get_dataset() or []
+#         # Gaming preference
+#         if feature_vector["gaming"] and "gaming" in laptop.get("Model","").lower():
+#             score += weights["gaming"]
 
-#         # Normalize fields so scoring works
-#         laptops = [normalize_laptop(l) for l in laptops]
+#         # Rating
+#         try:
+#             laptop_rating = float(laptop.get("Rating",0))
+#         except:
+#             laptop_rating = 0
+#         score += laptop_rating * weights["rating"]
 
-#         # Remove laptops without required fields
-#         laptops = [
-#             l for l in laptops
-#             if l.get("name") != "Unknown" and l.get("brand") != "Unknown"
-#         ]
+#         # Price preference
+#         if feature_vector["budget_pref"] < 0:  # cheap
+#             price_limit = feature_vector["price_limit"] if feature_vector["price_limit"] else 0
+#             price_score = max(price_limit - laptop.get("Price (RM)",0),0)/1000
+#             score += price_score * weights["price"]
 
-#         # Apply price filter if specified
-#         if prefs["price_limit"]:
-#             laptops = [l for l in laptops if l.get("price_rm", 0) <= prefs["price_limit"]]
+#         scored_laptops.append((score, laptop))
 
-#         # Score laptops
-#         for laptop in laptops:
-#             laptop["score"] = score_laptop(laptop, prefs)
+#     # Sort descending
+#     scored_laptops.sort(key=lambda x: x[0], reverse=True)
+#     top_laptops = [laptop for score, laptop in scored_laptops[:top_k]]
+#     return top_laptops
 
-#         # Sort by score descending
-#         laptops = sorted(laptops, key=lambda x: x["score"], reverse=True)
+# recommendation.py
+import re
+import math
 
-#         # Debug: print recommendations in backend
-#         print("Recommendation results:", laptops[:5])
+# ------------------------
+# Weighted + KNN scoring for top laptops
+# ------------------------
+def recommend_top_laptops(filtered_data, feature_vector, top_k=3, knn_weight=0.5, weighted_weight=0.5):
+    scored_laptops = []
 
-#         # Return top 5
-#         return [dict(l) for l in laptops[:5]]
+    for laptop in filtered_data:
+        # ------------------------
+        # Weighted scoring
+        # ------------------------
+        score_weighted = 0
+        weights = {
+            "ram": 2,
+            "ssd": 1,
+            "vram": 2,
+            "gaming": 3,
+            "rating": 2,
+            "price": 1
+        }
 
-#     except Exception as e:
-#         # Return error for debugging
-#         print("Error in recommendation:", str(e))
-#         return {"error": str(e)}
+        # RAM
+        try:
+            laptop_ram = int(re.search(r'\d+', laptop.get("Ram","0")).group())
+        except:
+            laptop_ram = 0
+        score_weighted += laptop_ram * weights["ram"]
+
+        # SSD
+        try:
+            laptop_ssd = int(re.search(r'\d+', laptop.get("SSD","0")).group())
+        except:
+            laptop_ssd = 0
+        score_weighted += laptop_ssd * weights["ssd"]
+
+        # VRAM / Dedicated GPU
+        laptop_vram = int(laptop.get("VRAM", 0))
+        if feature_vector["dedicated_gpu"] and laptop.get("Dedicated Gpu") != "Yes":
+            laptop_vram = 0
+        score_weighted += laptop_vram * weights["vram"]
+
+        # Gaming preference
+        if feature_vector["gaming"] and "gaming" in laptop.get("Model","").lower():
+            score_weighted += weights["gaming"]
+
+        # Rating
+        try:
+            laptop_rating = float(laptop.get("Rating",0))
+        except:
+            laptop_rating = 0
+        score_weighted += laptop_rating * weights["rating"]
+
+        # Price preference (cheap)
+        if feature_vector["budget_pref"] < 0:
+            price_limit = feature_vector["price_limit"] if feature_vector["price_limit"] else 0
+            price_score = max(price_limit - laptop.get("Price (RM)",0),0)/1000
+            score_weighted += price_score * weights["price"]
+
+        # ------------------------
+        # KNN similarity scoring (Euclidean distance)
+        # ------------------------
+        # create laptop vector same as feature_vector
+        laptop_vector = [
+            laptop_ram,
+            laptop_ssd,
+            laptop_vram,
+            1 if "gaming" in laptop.get("Model","").lower() else 0,
+            laptop_rating,
+            laptop.get("Price (RM)",0)
+        ]
+        user_vector = [
+            feature_vector["ram"],
+            feature_vector["ssd"],
+            feature_vector["vram_min"],
+            feature_vector["gaming"],
+            feature_vector["rating_min"],
+            feature_vector["price_limit"] or 0
+        ]
+        # Euclidean distance
+        dist = math.sqrt(sum((lv - uv)**2 for lv, uv in zip(laptop_vector, user_vector)))
+        score_knn = 1 / (1 + dist)  # higher is better
+
+        # ------------------------
+        # Combine weighted score + KNN similarity
+        # ------------------------
+        final_score = weighted_weight * score_weighted + knn_weight * score_knn
+        scored_laptops.append((final_score, laptop))
+
+    # Sort descending
+    scored_laptops.sort(key=lambda x: x[0], reverse=True)
+    top_laptops = [laptop for score, laptop in scored_laptops[:top_k]]
+    return top_laptops
