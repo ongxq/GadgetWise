@@ -35,9 +35,9 @@ const login = async () => {
   }
 
   if (profile.role === "admin") {
-    router.push("/admin-dashboard/ordering");
+    router.push("/admin-ordering");
   } else {
-    router.push("/dashboard/ai-recommendation");
+    router.push("/ai-recommendation");
   }
 };
 </script>

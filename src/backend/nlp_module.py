@@ -46,9 +46,9 @@ def parse_query(query):
     if result["budget_preference"] == "cheap" and not result["price_limit"]:
         result["price_limit"] = 2000  # default cheap max price
     # price detection
-    match = re.search(r'(under|below|bawah)\s*(\d+)', query)
+    match = re.search(r'(under|below|bawah)\s*(price)?\s*(rm)?\s*(\d+)', query)
     if match:
-        result["price_limit"] = int(match.group(2))
+        result["price_limit"] = int(match.group(4))
 
 
     # above / over

@@ -106,7 +106,7 @@ onMounted(async () => {
     >
       <nav class="flex flex-col mt-6 space-y-2">
         <router-link
-          to="/dashboard/ai-recommendation"
+          to="/ai-recommendation"
           class="flex items-center px-4 py-3 hover:bg-gray-100 transition"
         >
           <span class="text-xl">🏠</span>
@@ -114,15 +114,22 @@ onMounted(async () => {
         </router-link>
 
         <router-link
-          to="/dashboard/visualization"
+          to="/visualization"
           class="flex items-center px-4 py-3 hover:bg-gray-100 transition"
         >
           <span class="text-xl">📊</span>
           <span v-if="isOpen" class="ml-4">Visualization</span>
         </router-link>
+        <router-link
+          to="/comparison"
+          class="flex items-center px-4 py-3 hover:bg-gray-100 transition"
+        >
+          <span class="text-xl">🔍</span>
+          <span v-if="isOpen" class="ml-4">Comparison</span>
+        </router-link>
 
         <router-link
-          to="/dashboard/chatbot"
+          to="/chatbot"
           class="flex items-center px-4 py-3 hover:bg-gray-100 transition"
         >
           <span class="text-xl">💬</span>
@@ -130,7 +137,7 @@ onMounted(async () => {
         </router-link>
 
         <router-link
-          to="/dashboard/ordering"
+          to="/ordering"
           class="flex items-center px-4 py-3 hover:bg-gray-100 transition"
         >
           <span class="text-xl">🛒</span>
@@ -141,9 +148,10 @@ onMounted(async () => {
 
     <!-- ================= MAIN CONTENT ================= -->
     <main
-      class="pt-16 p-8 transition-all duration-300"
+      class="pt-16 transition-all duration-300 bg-green-500"
       :class="isOpen ? 'ml-64' : 'ml-20'"
     >
+      <slot />
       <router-view />
     </main>
   </div>

@@ -1,9 +1,24 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import Navbar from "../components/Navbar.vue";
 
 const query = ref("");
 const results = ref([]);
 const errorMessage = ref("");
+
+// Load saved search when page opens
+onMounted(() => {
+  const savedQuery = localStorage.getItem("savedQuery");
+  const savedResults = localStorage.getItem("savedResults");
+
+  if (savedQuery) {
+    query.value = savedQuery;
+  }
+
+  if (savedResults) {
+    results.value = JSON.parse(savedResults);
+  }
+});
 
 async function searchRecommendation() {
   // clear previous results
@@ -25,6 +40,10 @@ async function searchRecommendation() {
       results.value = [];
     } else {
       results.value = data.recommendations || []; // fallback if undefined
+
+      // ⭐ Save query and results
+      localStorage.setItem("savedQuery", query.value);
+      localStorage.setItem("savedResults", JSON.stringify(results.value));
     }
   } catch (err) {
     console.error(err);
@@ -32,10 +51,19 @@ async function searchRecommendation() {
     results.value = [];
   }
 }
+
+// Clear saved search
+// function clearSearch() {
+//   query.value = "";
+//   results.value = [];
+
+//   localStorage.removeItem("savedQuery");
+//   localStorage.removeItem("savedResults");
+// }
 </script>
 
 <template>
-  <div class="p-10">
+  <Navbar>
     <h1 class="text-3xl font-bold mb-6">AI Recommendation Page</h1>
 
     <div class="mb-6">
@@ -52,6 +80,12 @@ async function searchRecommendation() {
       >
         Search
       </button>
+      <!-- <button
+        @click="clearSearch"
+        class="bg-gray-500 text-white px-4 py-2 rounded"
+      >
+        Clear
+      </button> -->
     </div>
 
     <div v-if="errorMessage" class="text-red-500 mb-4">
@@ -78,5 +112,5 @@ async function searchRecommendation() {
     <div v-else-if="!errorMessage">
       <p>No results found.</p>
     </div>
-  </div>
+  </Navbar>
 </template>

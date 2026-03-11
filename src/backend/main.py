@@ -104,6 +104,12 @@ def normalize_laptop_keys(laptop):
         "gpu": laptop.get("Graphics"),
     }
 
+
+
+@app.get("/")
+def root():
+    return {"message": "Backend is running!"}
+
 # ------------------------
 # API endpoint
 # ------------------------
