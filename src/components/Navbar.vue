@@ -148,7 +148,7 @@ onMounted(async () => {
 
     <!-- ================= MAIN CONTENT ================= -->
     <main
-      class="pt-16 transition-all duration-300 bg-green-500"
+      class="pt-16 transition-all duration-300 bg-green-200"
       :class="isOpen ? 'ml-64' : 'ml-20'"
     >
       <slot />

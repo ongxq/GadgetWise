@@ -34,25 +34,155 @@ const defaultImage =
 // map brand to image URLs
 function getBrandImage(brand, id) {
   const images = {
-    Lenovo: [
-      "https://example.com/lenovo1.jpg",
-      "https://example.com/lenovo2.jpg",
-      "https://example.com/lenovo3.jpg",
-    ],
-
-    HP: [
-      "https://example.com/hp1.jpg",
-      "https://example.com/hp2.jpg",
-      "https://example.com/hp3.jpg",
-    ],
-
     Acer: [
       "https://onxhuoxmggqudwfeedes.supabase.co/storage/v1/object/sign/laptop_pic/acer.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OWRmZGQzNS04YjQ3LTQ0YmEtOTkxYi0yZTg2ZThlYjZjYmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsYXB0b3BfcGljL2FjZXIuanBnIiwiaWF0IjoxNzczMTQwMjQzLCJleHAiOjE4MDQ2NzYyNDN9.QV9DA4a0JcL7AW-f64Oew4RmJYL45bOQtCPxJb8GzLc",
       "https://technave.com/data/files/article/202601020152042327.jpg",
       "https://technave.com/data/files/article/202510270315107462.jpg",
     ],
-
     Apple: [
+      "https://technave.com/data/files/mall/article/202012051306288171.jpg",
+      "https://technave.com/data/files/article/202403050250111685.jpg",
+      "https://technave.com/data/files/mall/article/202009070554371260.jpg",
+    ],
+
+    Asus: [
+      "https://technave.com/data/files/article/202502190941278114.jpg",
+      "https://technave.com/data/files/article/202407170640102270.jpg",
+      "https://technave.com/data/files/article/202405100246011605.jpg",
+    ],
+
+    Avita: [
+      "https://www.ect.my/image/ectmy/image/cache/data/all_product_images/product-12136/AVITA%20LIBER%20V14-i7%20GRY%202-850x850.jpg",
+      "https://m.media-amazon.com/images/I/61UDGBWyGZL._AC_UF1000,1000_QL80_.jpg",
+      "https://5.imimg.com/data5/SELLER/Default/2023/8/336395779/IA/SI/CZ/143558492/buy-new-avita-laptop-core-i3-10th-gen-4gb-ram-and-256gb-storage.png",
+    ],
+
+    AXL: [
+      "https://axlworld.com/wp-content/uploads/2025/05/image-4-2-300x260.png",
+      "https://5.imimg.com/data5/SELLER/Default/2023/5/312121289/JE/QU/IA/256711/laptop-15-inch-1-a-500x500.jpg",
+    ],
+    Chuwi: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpvaX52aKzHwklgF2N-wajXaJ6GO03t57QPg&s",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNZoQni_zVuPmLMMkn_ru-rtPw0QqkgSD6Jw&s",
+    ],
+
+    Colorful: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5VU06vRcgKQvXLEYmljbBFB0k2O8dsBv6Kg&s",
+    ],
+
+    Dell: [
+      "https://technave.com/data/files/article/202602120140401702.jpg",
+      "https://technave.com/data/files/article/202507070819344303.jpg",
+      "https://technave.com/data/files/article/202503130727135300.jpg",
+    ],
+
+    Fujitsu: [
+      "https://www.bhphotovideo.com/images/fb/fujitsu_spfc_e544_001_e544_i5_4210m_4gb_500gb_windows7p_windows8_1_14_1082600.jpg",
+    ],
+    Gigabyte: [
+      "https://cdn1.npcdn.net/images/d7ca3336986a9caf62cf0362d98ec479_1711278978.webp?md5id=a390ff7af39b581d079075b5f848662e&new_width=1000&new_height=1000&w=1710472569&from=jpeg&type=9",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpALxY1qKHkMpsm-ZjH7GP5Bf0XdiL50jETQ&s",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThKYSfqIvcbcSWhiABSxJl0FCKoo1HSQuiNA&s",
+    ],
+
+    Honor: [
+      "https://technave.com/data/files/article/202208250939384053.jpg",
+      "https://technave.com/data/files/mall/article/202010060100122979.jpg",
+      "https://technave.com/data/files/article/202506050946086303.jpg",
+    ],
+
+    HP: [
+      "https://technave.com/data/files/article/202601270217115231.jpg",
+      "https://technave.com/data/files/article/202511030522026781.jpg",
+      "https://technave.com/data/files/article/202511030512427134.jpg",
+    ],
+
+    Huawei: [
+      "https://technave.com/data/files/article/202107270210445397.jpg",
+      "https://technave.com/data/files/mall/article/202009070747138301.jpg",
+    ],
+    iBall: [
+      "https://static.toiimg.com/thumb/msid-52219876,imgsize-31686,width-400,resizemode-4/52219876.jpg",
+    ],
+
+    Infinix: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRk3tf-O8o3xhHS-tYZi3ZRZGENnQ_jLtpzJw&s",
+      "https://technave.com/data/files/article/202405220716212373.png",
+    ],
+
+    Jio: [
+      "https://technave.com/data/files/mall/article/202106080225107265.jpg",
+      "https://technave.com/data/files/mall/article/202101120337025309.jpg",
+    ],
+
+    Lenovo: [
+      "https://technave.com/data/files/article/202510090224406956.jpg",
+      "https://technave.com/data/files/article/202505290713593385.jpg",
+      "https://technave.com/data/files/article/202403290504101832.jpg",
+    ],
+    LG: [
+      "https://5.imimg.com/data5/NI/YD/MY-64808542/lg-laptops-500x500.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkypSZh-mr_TLVQJ1OnhAduzvdKYywTkrsZQ&s",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvwX_Ao2diBGNgSi-yIR_LbL6LmPZsRtZIRQ&s",
+    ],
+
+    Microsoft: [
+      "https://technave.com/data/files/mall/article/202010150855462934.jpg",
+      "https://technave.com/data/files/mall/article/202011050642189223.jpg",
+      "https://technave.com/data/files/article/202310190746484572.jpg",
+    ],
+
+    MSI: [
+      "https://technave.com/data/files/article/202511110407541586.jpg",
+      "https://technave.com/data/files/article/202509290737557721.jpg",
+      "https://technave.com/data/files/article/202509290138229701.jpg",
+    ],
+
+    Ninkear: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKpdWtAt15lUAl1TAehORCn7z0wRCRaD7zJA&s",
+    ],
+    Primebook: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL6124f_x4sdHCsn2DfgW5s2KcVHGjwbOx5w&s",
+    ],
+
+    Razer: [
+      "https://exceldisc.com/_next/image?url=https%3A%2F%2Fapiv2.exceldisc.com%2Fmedia%2F121861%2Frazer-blade-15-advanced-edition-laptop-.jpeg&w=3840&q=75",
+    ],
+
+    Samsung: [
+      "https://onxhuoxmggqudwfeedes.supabase.co/storage/v1/object/sign/laptop_pic/acer.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OWRmZGQzNS04YjQ3LTQ0YmEtOTkxYi0yZTg2ZThlYjZjYmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsYXB0b3BfcGljL2FjZXIuanBnIiwiaWF0IjoxNzczMTQwMjQzLCJleHAiOjE4MDQ2NzYyNDN9.QV9DA4a0JcL7AW-f64Oew4RmJYL45bOQtCPxJb8GzLc",
+      "https://img.global.news.samsung.com/my/wp-content/uploads/2019/01/Samsung-Notebook-Odyssey_main.jpg",
+      "https://technave.com/data/files/article/202510270315107462.jpg",
+    ],
+
+    Tecno: [
+      "https://technave.com/data/files/mall/article/202012051306288171.jpg",
+      "https://example.com/apple2.jpg",
+      "https://example.com/apple3.jpg",
+    ],
+    Ultimus: [
+      "https://onxhuoxmggqudwfeedes.supabase.co/storage/v1/object/sign/laptop_pic/acer.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OWRmZGQzNS04YjQ3LTQ0YmEtOTkxYi0yZTg2ZThlYjZjYmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsYXB0b3BfcGljL2FjZXIuanBnIiwiaWF0IjoxNzczMTQwMjQzLCJleHAiOjE4MDQ2NzYyNDN9.QV9DA4a0JcL7AW-f64Oew4RmJYL45bOQtCPxJb8GzLc",
+      "https://technave.com/data/files/article/202601020152042327.jpg",
+      "https://technave.com/data/files/article/202510270315107462.jpg",
+    ],
+
+    Walker: [
+      "https://technave.com/data/files/mall/article/202012051306288171.jpg",
+      "https://example.com/apple2.jpg",
+      "https://example.com/apple3.jpg",
+    ],
+    Wings: [
+      "https://onxhuoxmggqudwfeedes.supabase.co/storage/v1/object/sign/laptop_pic/acer.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OWRmZGQzNS04YjQ3LTQ0YmEtOTkxYi0yZTg2ZThlYjZjYmMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsYXB0b3BfcGljL2FjZXIuanBnIiwiaWF0IjoxNzczMTQwMjQzLCJleHAiOjE4MDQ2NzYyNDN9.QV9DA4a0JcL7AW-f64Oew4RmJYL45bOQtCPxJb8GzLc",
+      "https://technave.com/data/files/article/202601020152042327.jpg",
+      "https://technave.com/data/files/article/202510270315107462.jpg",
+    ],
+
+    Xiaomi: [
+      "https://technave.com/data/files/article/small_202207060714402809.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZkwyhBMOs0iT9eOdP7khJdbxWjtZ3aVbHiQ&s",
+      "https://www.giztop.com/media/catalog/product/cache/97cc1143d2e20f2b0c8ea91aaa12053c/x/i/xiaomi_mi_notebook_pro_15_2020_1.jpg",
+    ],
+    Zebronics: [
       "https://technave.com/data/files/mall/article/202012051306288171.jpg",
       "https://example.com/apple2.jpg",
       "https://example.com/apple3.jpg",
@@ -130,11 +260,17 @@ function goCompare() {
 
   router.push("/compare-result");
 }
+
+function clearCompare() {
+  selected.value = [];
+  localStorage.removeItem("compareLaptops");
+}
+
 onMounted(() => {
   fetchLaptops();
 
   const saved = localStorage.getItem("compareLaptops");
-  if (saved) {
+  if (saved && saved !== "[]") {
     selected.value = JSON.parse(saved);
   }
 });
@@ -318,7 +454,7 @@ onMounted(() => {
       </div>
 
       <!-- LAPTOP CARDS -->
-      <div class="flex flex-wrap gap-6 justify-center">
+      <div class="flex flex-wrap gap-2 justify-center">
         <div
           v-for="laptop in filteredLaptops"
           :key="laptop.id"
@@ -391,10 +527,7 @@ onMounted(() => {
         Compare ({{ selected.length }})
       </button>
       <button
-        @click="
-          selected = [];
-          localStorage.removeItem('compareLaptops');
-        "
+        @click="clearCompare"
         class="bg-red-500 text-white px-4 py-2 rounded"
       >
         Clear

@@ -5,15 +5,43 @@ import Chart from "chart.js/auto";
 import Navbar from "../components/Navbar.vue";
 
 const route = useRoute();
-
-/* Safe laptops data */
-//const laptops = ref(history.state?.laptops || []);
-
 const laptops = ref([]);
+
+// Generate a color for each laptop
+function getColor(index) {
+  const colors = [
+    "#FF6384",
+    "#36A2EB",
+    "#FFCE56",
+    "#4BC0C0",
+    "#9966FF",
+    "#FF9F40",
+    "#C9CBCF",
+    "#8DD9B9",
+    "#FF6F91",
+    "#6A4C93",
+  ];
+  return colors[index % colors.length];
+}
+
+// Shorten model names for charts
+function getShortModel(model) {
+  return model.split("(")[0].trim();
+}
+
+const features = [
+  { label: "Brand", key: "Brand" },
+  { label: "Price (RM)", key: "Price (RM)" },
+  { label: "RAM", key: "Ram" },
+  { label: "SSD", key: "SSD" },
+  { label: "Display", key: "Display" },
+  { label: "Graphics", key: "Graphics" },
+  { label: "VRAM", key: "VRAM" },
+  { label: "Battery", key: "Battery" },
+];
 
 onMounted(() => {
   const stored = localStorage.getItem("compareLaptops");
-
   if (!stored) {
     console.warn("No laptops received");
     return;
@@ -21,18 +49,105 @@ onMounted(() => {
 
   laptops.value = JSON.parse(stored);
 
-  const ctx = document.getElementById("priceChart");
+  // Prepare datasets for charts (one dataset per model for unique colors)
+  const priceDatasets = laptops.value.map((l, i) => ({
+    label: getShortModel(l.Model),
+    data: [l["Price (RM)"]],
+    backgroundColor: getColor(i),
+  }));
 
-  new Chart(ctx, {
+  const ramDatasets = laptops.value.map((l, i) => ({
+    label: getShortModel(l.Model),
+    data: [l["RAM (filter)"]],
+    backgroundColor: getColor(i),
+  }));
+
+  const vramDatasets = laptops.value.map((l, i) => ({
+    label: getShortModel(l.Model),
+    data: [l.VRAM],
+    backgroundColor: getColor(i),
+  }));
+
+  // Create Price chart (horizontal)
+  new Chart(document.getElementById("priceChart"), {
     type: "bar",
     data: {
-      labels: laptops.value.map((l) => l.Brand),
-      datasets: [
-        {
-          label: "Price (RM)",
-          data: laptops.value.map((l) => l["Price (RM)"]),
+      labels: ["Price (RM)"], // single category
+      datasets: priceDatasets,
+    },
+    options: {
+      indexAxis: "x", // horizontal bars
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+          position: "top",
+          labels: { boxWidth: 20, padding: 10 },
         },
-      ],
+        title: {
+          display: true,
+          text: "Price Comparison",
+          font: { size: 18 },
+        },
+      },
+      scales: {
+        x: { beginAtZero: true },
+      },
+    },
+  });
+
+  // RAM chart
+  new Chart(document.getElementById("ramChart"), {
+    type: "bar",
+    data: {
+      labels: ["RAM (GB)"],
+      datasets: ramDatasets,
+    },
+    options: {
+      indexAxis: "x",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+          position: "top",
+          labels: { boxWidth: 20, padding: 10 },
+        },
+        title: {
+          display: true,
+          text: "RAM Comparison",
+          font: { size: 18 },
+        },
+      },
+      scales: { x: { beginAtZero: true } },
+    },
+  });
+
+  // VRAM chart
+  new Chart(document.getElementById("vramChart"), {
+    type: "bar",
+    data: {
+      labels: ["VRAM (GB)"],
+      datasets: vramDatasets,
+    },
+    options: {
+      indexAxis: "x",
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+          position: "top",
+          labels: { boxWidth: 20, padding: 10 },
+        },
+        title: {
+          display: true,
+          text: "VRAM Comparison",
+          font: { size: 18 },
+        },
+      },
+      scales: { x: { beginAtZero: true } },
     },
   });
 });
@@ -41,43 +156,70 @@ onMounted(() => {
 <template>
   <Navbar>
     <div class="p-10">
-      <h1 class="text-3xl font-bold mb-6">Laptop Comparison</h1>
+      <h1 class="text-3xl font-bold mb-8">Laptop Comparison</h1>
 
-      <!-- Table -->
-      <table class="table-auto border w-full mb-10">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="border p-2">Brand</th>
-            <th class="border p-2">Price</th>
-            <th class="border p-2">RAM</th>
-            <th class="border p-2">SSD</th>
-            <th class="border p-2">VRAM</th>
-            <th class="border p-2">Battery</th>
-          </tr>
-        </thead>
+      <!-- Comparison Table -->
+      <div class="overflow-x-auto">
+        <table class="table-auto border w-full text-center">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border p-3">Feature</th>
+              <th v-for="l in laptops" :key="l.id" class="border p-3">
+                {{ l.Model }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="feature in features" :key="feature.key">
+              <td class="border p-2 font-semibold bg-gray-100">
+                {{ feature.label }}
+              </td>
+              <td v-for="l in laptops" :key="l.id" class="border p-2">
+                {{ l[feature.key] || "-" }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <tbody>
-          <tr v-for="l in laptops" :key="l.Brand">
-            <td class="border p-2">
-              {{ l.Brand }}
-            </td>
+      <!-- Charts -->
+      <!-- Graph Comparison Wrapper -->
+      <div class="mt-10">
+        <h2 class="text-2xl font-bold mb-4">Graph Comparison</h2>
 
-            <td class="border p-2">RM {{ l["Price (RM)"] }}</td>
+        <!-- Custom Legend for all models -->
+        <div class="flex flex-wrap gap-4 mb-6">
+          <div
+            v-for="(l, index) in laptops"
+            :key="l.id"
+            class="flex items-center gap-1 text-sm"
+          >
+            <span
+              class="w-4 h-4 rounded"
+              :style="{ backgroundColor: getColor(index) }"
+            ></span>
+            <span>{{ getShortModel(l.Model) }}</span>
+          </div>
+        </div>
 
-            <td class="border p-2">{{ l.Ram }} GB</td>
-
-            <td class="border p-2">{{ l.SSD }} GB</td>
-
-            <td class="border p-2">{{ l.VRAM }} GB</td>
-
-            <td class="border p-2">{{ l.Battery }} Wh</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Chart -->
-      <div class="w-full max-w-3xl">
-        <canvas id="priceChart"></canvas>
+        <!-- Charts Grid -->
+        <div class="grid md:grid-cols-3 gap-10">
+          <div
+            class="w-full h-96 bg-white border-4 border-blue-900 rounded-lg p-4"
+          >
+            <canvas id="priceChart"></canvas>
+          </div>
+          <div
+            class="w-full h-96 bg-white border-4 border-blue-900 rounded-lg p-4"
+          >
+            <canvas id="ramChart"></canvas>
+          </div>
+          <div
+            class="w-full h-96 bg-white border-4 border-blue-900 rounded-lg p-4"
+          >
+            <canvas id="vramChart"></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </Navbar>
